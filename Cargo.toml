@@ -1,0 +1,18 @@
+[package]
+name = "rusthost"
+version = "1.0.0"
+edition = "2021"
+description = "rusthost — Local Development & Admin Environment Manager (Apache, MySQL, Multi-PHP, Redis, Node.js, PM2)"
+authors = ["rusthost"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sysinfo = "0.30"
+chrono = { version = "0.4", features = ["serde"] }
+tiny_http = "0.12"
+wry = "0.47"
+tao = "0.30"
+open = "5.1"
+dirs = "5.0"
+qrcodegen = "1.8"

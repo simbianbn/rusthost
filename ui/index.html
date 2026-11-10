@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rusthost</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Minimal Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-bar">
+        <div class="brand-left">
+          <img src="icon.png" alt="rusthost" class="brand-logo" />
+          <span class="brand-name">rusthost</span>
+        </div>
+        <span class="brand-ver">v1.0</span>
+      </div>
+
+      <div class="nav-section">Workspace</div>
+      <div class="nav-item active" onclick="switchView('dashboard', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Overview</span>
+      </div>
+      <div class="nav-item" onclick="switchView('system-report', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span>Diagnostics</span>
+      </div>
+      <div class="nav-item" onclick="switchView('services', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="6" rx="1"/><rect x="2" y="15" width="20" height="6" rx="1"/><circle cx="6" cy="6" r="1"/><circle cx="6" cy="18" r="1"/></svg>
+        <span>Services &amp; Ports</span>
+      </div>
+
+      <div class="nav-section">Runtimes</div>
+      <div class="nav-item" onclick="switchView('php', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <span>PHP Runtime</span>
+      </div>
+      <div class="nav-item" onclick="switchView('node-redis', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        <span>Node.js &amp; Redis</span>
+      </div>
+      <div class="nav-item" onclick="switchView('mysql', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span>MySQL Engine</span>
+      </div>
+
+      <div class="nav-section">Routing &amp; Tools</div>
+      <div class="nav-item" onclick="switchView('vhosts', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <span>VirtualHosts &amp; SSL</span>
+      </div>
+      <div class="nav-item" onclick="switchView('mail', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span>Mail Catcher</span>
+      </div>
+      <div class="nav-item" onclick="switchView('devtools', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        <span>Project Scaffolder</span>
+      </div>
+
+      <div class="nav-section">System</div>
+      <div class="nav-item" onclick="switchView('monitor', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Telemetry &amp; Eco</span>
+      </div>
+      <div class="nav-item" onclick="switchView('installer', this)">
+        <svg class="nav-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Setup &amp; Migration</span>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="eco-status-row" onclick="toggleEcoGuardQuick()">
+          <span style="display:flex;align-items:center;gap:7px">
+            <span class="dot online" id="ecoDot"></span>
+            <span id="ecoBadgeText">Eco Guard</span>
+          </span>
+          <span style="font-family:var(--mono);font-size:10.5px;color:var(--text-muted)">0% sleep</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Area -->
+    <main class="main-stage">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="status-strip">
+            <span class="status-item"><span class="dot" id="dot-apache"></span>Apache <strong id="top-apache">:80</strong></span>
+            <span class="status-item"><span class="dot" id="dot-mysql"></span>MySQL <strong id="top-mysql">:3306</strong></span>
+            <span class="status-item"><span class="dot" id="dot-redis"></span>Redis <strong id="top-redis">:6379</strong></span>
+            <span class="status-item"><span class="dot online"></span>PHP <strong id="top-php">8.3</strong></span>
+            <span class="status-item"><span class="dot online"></span>Node <strong id="top-node">v20</strong></span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn" onclick="openLegacyModal()">Legacy Check</button>
+          <button class="btn" onclick="apiAction('open_localhost')">localhost</button>
+          <button class="btn" onclick="apiAction('open_phpmyadmin')">phpMyAdmin</button>
+        </div>
+      </header>
+
+      <div class="content-scroll" id="viewContainer">
+        <!-- Rendered by app.js -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Legacy Stack Modal -->
+  <div class="modal-backdrop" id="legacyModal">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:15px;font-weight:600">Legacy Stack Detection</div>
+        <button class="btn" onclick="closeLegacyModal()">Close</button>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:14px">
+        Detect existing XAMPP, Laragon, or MAMP installations to prevent port conflicts on <code>:80</code> and <code>:3306</code>.
+      </p>
+      <div id="legacyModalBody"></div>
+    </div>
+  </div>
+
+  <!-- QR Share Modal -->
+  <div class="modal-backdrop" id="qrModal">
+    <div class="modal-box" style="width:360px;text-align:center">
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px" id="qrModalTitle">LAN Share</div>
+      <div style="font-family:var(--mono);font-size:11.5px;color:var(--text-secondary);margin-bottom:14px" id="qrModalUrl"></div>
+      <div id="qrModalSvg" style="display:flex;justify-content:center;margin-bottom:16px"></div>
+      <button class="btn" style="width:100%" onclick="document.getElementById('qrModal').classList.remove('open')">Done</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
