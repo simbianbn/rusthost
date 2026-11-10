@@ -51,8 +51,16 @@ foreach ($stack in $LegacyStacks) {
 # 2. Install rusthost
 New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
 $SourceExe = Join-Path $PSScriptRoot "..\target\release\rusthost.exe"
+$PortableExe = Join-Path $PSScriptRoot "..\rusthost.exe"
 if (Test-Path $SourceExe) {
     Copy-Item -Path $SourceExe -Destination "$InstallDir\rusthost.exe" -Force
+} elseif (Test-Path $PortableExe) {
+    Copy-Item -Path $PortableExe -Destination "$InstallDir\rusthost.exe" -Force
+}
+
+$SourceIco = Join-Path $PSScriptRoot "..\ui\icon.ico"
+if (Test-Path $SourceIco) {
+    Copy-Item -Path $SourceIco -Destination "$InstallDir\icon.ico" -Force
 }
 
 # 3. Create Desktop Shortcut
@@ -61,6 +69,9 @@ $WshShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WshShell.CreateShortcut("$DesktopPath\rusthost.lnk")
 $Shortcut.TargetPath = "$InstallDir\rusthost.exe"
 $Shortcut.WorkingDirectory = $InstallDir
+if (Test-Path "$InstallDir\icon.ico") {
+    $Shortcut.IconLocation = "$InstallDir\icon.ico"
+}
 $Shortcut.Description = "rusthost — Local Development & Admin Environment Manager"
 $Shortcut.Save()
 
